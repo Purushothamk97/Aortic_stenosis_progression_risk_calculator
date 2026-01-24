@@ -37,5 +37,4 @@ Always interpret results with a cardiologist and use guideline-directed clinical
 
 ## Live Demo
 
-You can try the calculator here:  
-🔗 [https://yourusername.github.io/aortic-stenosis-progression-calculator](https://yourusername.github.io/aortic-stenosis-progression-calculator)  
+You can try the calculator [here](https://purushothamk97.github.io/Aortic_stenosis_progression_risk_calculator/)  
