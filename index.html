@@ -13,6 +13,7 @@
       color: #333; 
     }
     h1 { color: #0056b3; }
+    h3 { margin-top: 0; color: #0056b3; }
     label { 
       display: block; 
       margin: 1.2rem 0 0.4rem; 
@@ -60,23 +61,50 @@
     .risk-high { color: #dc3545; font-weight: bold; }
     .risk-medium { color: #fd7e14; font-weight: bold; }
     .risk-low { color: #28a745; font-weight: bold; }
-    table.risk-table {
+    table.risk-table, table.reference-table {
       width: 100%;
       border-collapse: collapse;
       margin: 1.5rem 0;
       font-size: 0.95rem;
     }
-    table.risk-table th, table.risk-table td {
+    table.risk-table th, table.risk-table td,
+    table.reference-table th, table.reference-table td {
       border: 1px solid #dee2e6;
       padding: 0.8rem;
       text-align: left;
     }
-    table.risk-table th {
+    table th {
       background-color: #e9ecef;
       font-weight: bold;
     }
-    table.risk-table tr:nth-child(even) {
+    table tr:nth-child(even) {
       background-color: #f8f9fa;
+    }
+    .formula-section, .severity-section {
+      margin: 2rem 0;
+      padding: 1rem;
+      background: #f1f3f5;
+      border-radius: 6px;
+      border-left: 4px solid #6c757d;
+    }
+    .formula-section details, .severity-section details {
+      margin-top: 0.8rem;
+    }
+    .formula-section summary, .severity-section summary {
+      cursor: pointer;
+      font-weight: bold;
+      color: #0056b3;
+      padding: 0.5rem 0;
+    }
+    .formula-code {
+      background: #ffffff;
+      padding: 1rem;
+      border: 1px solid #ced4da;
+      border-radius: 4px;
+      font-family: monospace;
+      white-space: pre-wrap;
+      overflow-x: auto;
+      margin: 1rem 0;
     }
     .references { 
       margin-top: 4rem; 
@@ -97,13 +125,6 @@
     a { color: #0069d9; text-decoration: none; }
     a:hover { text-decoration: underline; }
     .modifiable-list { margin-top: 1rem; list-style-type: disc; padding-left: 1.5rem; }
-    details { margin-top: 0.6rem; }
-    summary { 
-      cursor: pointer; 
-      font-weight: bold; 
-      color: #0056b3; 
-      padding: 0.4rem 0; 
-    }
     details p { 
       margin: 0.6rem 0 0 1.2rem; 
       padding-left: 1rem; 
@@ -114,7 +135,92 @@
 </head>
 <body>
   <h1>Aortic Stenosis Progression Risk Calculator</h1>
-  <p>This calculator estimates the annual decline in Aortic Valve Area (AVA) based on collated research data points from studies on AS progression. Weights are derived from regression coefficients where available (e.g., age, CKD, AF) and approximated for modifiable factors like diabetes and hypertension based on hazard ratios and associations from meta-analyses. A more negative decline indicates faster progression. Risk categories: High (<-0.12 cm²/year, likely rapid progression), Medium (-0.08 to -0.12), Low (>-0.08, slower than average).</p>
+  <p>This calculator estimates the annual decline in Aortic Valve Area (AVA) based on collated research data points from studies on AS progression. Weights are derived from regression coefficients where available (e.g., age, CKD, AF) and approximated for modifiable factors like diabetes and hypertension based on hazard ratios and associations from meta-analyses. A more negative decline indicates faster progression.</p>
+  <p>Note: This is a simplified tool for educational purposes, not medical advice. Consult a physician for clinical use.</p>
+
+  <div class="severity-section">
+    <h3>Aortic Valve Area (AVA) Reference Table</h3>
+    <p>Standard classification of aortic stenosis severity (at rest, per current guidelines).</p>
+    <table class="reference-table">
+      <thead>
+        <tr>
+          <th>Severity Grade</th>
+          <th>Aortic Valve Area (AVA)</th>
+          <th>Mean Gradient (mmHg)</th>
+          <th>Peak Velocity (m/s)</th>
+          <th>Typical Notes</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Normal</td>
+          <td>> 2.0 cm²</td>
+          <td>< 10</td>
+          <td>< 2.0</td>
+          <td>No stenosis</td>
+        </tr>
+        <tr>
+          <td>Mild AS</td>
+          <td>1.5 – 2.0 cm²</td>
+          <td>< 20</td>
+          <td>< 3.0</td>
+          <td>Often asymptomatic</td>
+        </tr>
+        <tr>
+          <td>Moderate AS</td>
+          <td>1.0 – 1.5 cm²</td>
+          <td>20 – 40</td>
+          <td>3.0 – 4.0</td>
+          <td>Surveillance recommended</td>
+        </tr>
+        <tr>
+          <td>Severe AS</td>
+          <td>≤ 1.0 cm²</td>
+          <td>≥ 40</td>
+          <td>≥ 4.0</td>
+          <td>Consider intervention if symptomatic</td>
+        </tr>
+        <tr>
+          <td>Very Severe AS</td>
+          <td>≤ 0.6 cm²</td>
+          <td>≥ 60</td>
+          <td>≥ 5.0</td>
+          <td>High risk of events</td>
+        </tr>
+      </tbody>
+    </table>
+    <p style="font-size: 0.9rem; margin-top: 1rem; color: #495057;">
+      <strong>Sources</strong>: AHA/ACC 2020 Valvular Heart Disease Guidelines, ESC 2021 Valvular Heart Disease Guidelines
+    </p>
+  </div>
+
+  <div class="formula-section">
+    <details>
+      <summary>View the Underlying Formula & Weights</summary>
+      <p>The estimated annual AVA decline (cm²/year) is calculated as:</p>
+      <div class="formula-code">
+decline = 
+  -0.0013 × age 
+  + (if mean gradient > 20: -0.001 × (mean gradient - 20)) 
+  + (if eGFR < 60: -0.059) 
+  + (-0.021 × atrial fibrillation [0 or 1]) 
+  + (-0.020 × diabetes [0 or 1]) 
+  + (if SBP > 140: -0.020) 
+  + (if BMI > 30: -0.020) 
+  + (-0.020 × smoking [0 or 1]) 
+  + (if LDL > 100: -0.020) 
+  + (-0.00038 × LVMI [if provided]) 
+  + (-0.0008 × SVI [if provided])
+      </div>
+      <p><strong>Notes on weights:</strong></p>
+      <ul>
+        <li>Primary coefficients (-0.0013 per year age, -0.059 CKD, -0.021 AF, -0.00038 per g/m² LVMI, -0.0008 per mL/m² SVI) are directly from the 2024 Venema multivariable model.</li>
+        <li>Modifiable factor weights (~ -0.020) are approximations derived from hazard ratios (HR 1.06–1.71) in supporting studies (CANHEART, Ko et al.).</li>
+        <li>Baseline mean gradient adjustment is a scaled approximation from meta-regression showing faster decline with higher severity.</li>
+      </ul>
+      <p>Risk thresholds are informed by the study's observed distribution: median -0.09 cm²/year, rapid progressors ~-0.15, slow ~-0.04.</p>
+    </details>
+  </div>
   
   <label>Age (years): <input type="number" id="age" value="70" min="0"></label>
   <label>Baseline Mean Gradient (mmHg): <input type="number" id="mg" value="20" min="0"></label>
@@ -132,14 +238,49 @@
   
   <div id="result"></div>
 
+  <table class="risk-table">
+    <thead>
+      <tr>
+        <th>Risk Category</th>
+        <th>Annual AVA Decline Threshold</th>
+        <th>Description</th>
+        <th>Typical Surveillance</th>
+        <th>Key Considerations</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td class="risk-high">High Risk</td>
+        <td>< -0.12 cm²/year</td>
+        <td>Rapid progression (top quartile in studies)</td>
+        <td>Every 6–12 months</td>
+        <td>Higher likelihood of early AVR if symptomatic; prioritize modifiable factors</td>
+      </tr>
+      <tr>
+        <td class="risk-medium">Medium Risk</td>
+        <td>-0.08 to -0.12 cm²/year</td>
+        <td>Average/moderate progression rate</td>
+        <td>Every 1–2 years</td>
+        <td>Standard guideline-based follow-up; optimize comorbidities</td>
+      </tr>
+      <tr>
+        <td class="risk-low">Low Risk</td>
+        <td>> -0.08 cm²/year</td>
+        <td>Slower than average progression</td>
+        <td>Every 2–3 years (if mild/moderate)</td>
+        <td>Lower urgency; maintain risk factor control</td>
+      </tr>
+    </tbody>
+  </table>
+
   <div class="references">
     <h2>References (Ordered by Importance in Model)</h2>
     <ol>
       <li>
-        <span class="ref-title">Venema CS, et al. Prediction of the Individual Aortic Stenosis Progression Rate and its Association With Clinical Outcomes.</span> <a href="https://www.jacc.org/doi/10.1016/j.jacadv.2024.100879" target="_blank">JACC: Advances</a>. 2024. (Also available on <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC11198185" target="_blank">PubMed Central</a>. Core multivariable regression model for predictors like age, CKD, AF; median AVA decline and risk categories.)
+        <span class="ref-title">Venema CS, et al. Prediction of the Individual Aortic Stenosis Progression Rate and its Association With Clinical Outcomes.</span> <a href="https://www.jacc.org/doi/10.1016/j.jacadv.2024.100879" target="_blank">JACC: Advances</a>. 2024. (Also available on <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC11198185" target="_blank">PubMed Central</a>.)
         <details>
           <summary>Key Evidence</summary>
-          <p>Median AVA decrease: 0.09 cm²/y (IQR: 0.04-0.15 cm²/y); rapid progressors: 0.15 cm²/y vs. slow: 0.04 cm²/y. Multivariable model: Older age (-0.013 cm²/y per 10 years), AF (-0.021 cm²/y), CKD (-0.059 cm²/y), higher LVMI (-0.019 cm²/y per 50 g/m²), higher SVI (-0.008 cm²/y per 10 mL/m²). Rapid progression linked to higher mortality (HR 1.77) and AVR (HR 3.44). Predictors ranked by strength: CKD (-0.059), AF (-0.021), Age per 10y (-0.013), LVMI per 50 g/m² (-0.019), SVI per 10 mL/m² (-0.008).</p>
+          <p>Median AVA decrease: 0.09 cm²/y (IQR: 0.04-0.15 cm²/y); rapid progressors: 0.15 cm²/y vs. slow: 0.04 cm²/y. Multivariable model: Older age (-0.013 cm²/y per 10 years), AF (-0.021 cm²/y), CKD (-0.059 cm²/y), higher LVMI (-0.019 cm²/y per 50 g/m²), higher SVI (-0.008 cm²/y per 10 mL/m²). Rapid progression linked to higher mortality (HR 1.77) and AVR (HR 3.44).</p>
         </details>
       </li>
       <li>
@@ -183,27 +324,15 @@
       let decline = 0;
       
       decline += -0.0013 * age;
-      
-      if (mg > 20) {
-        decline += -0.001 * (mg - 20);
-      }
-      
+      if (mg > 20) decline += -0.001 * (mg - 20);
       if (egfr < 60) decline += -0.059;
-      
       decline += -0.021 * af;
-      
       decline += -0.020 * diabetes;
-      
       if (sbp > 140) decline += -0.020;
-      
       if (bmi > 30) decline += -0.020;
-      
       decline += -0.020 * smoking;
-      
       if (ldl > 100) decline += -0.020;
-      
       if (lvmi > 0) decline += -0.00038 * lvmi;
-      
       if (svi > 0) decline += -0.0008 * svi;
       
       let risk = '';
