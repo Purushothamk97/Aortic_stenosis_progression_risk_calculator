@@ -38,3 +38,15 @@ Always interpret results with a cardiologist and use guideline-directed clinical
 ## Live Demo
 
 You can try the calculator [here](https://purushothamk97.github.io/Aortic_stenosis_progression_risk_calculator/)  
+
+### Aortic Valve Area (AVA) Reference Table
+
+| Severity Grade       | Aortic Valve Area (AVA) | Mean Gradient (mmHg) | Peak Velocity (m/s) | Typical Clinical Notes |
+|----------------------|--------------------------|-----------------------|----------------------|------------------------|
+| Normal               | > 2.0 cm²               | < 10                 | < 2.0               | No stenosis            |
+| Mild AS              | 1.5 – 2.0 cm²           | < 20                 | < 3.0               | Often asymptomatic     |
+| Moderate AS          | 1.0 – 1.5 cm²           | 20 – 40              | 3.0 – 4.0           | Surveillance recommended |
+| Severe AS            | ≤ 1.0 cm²               | ≥ 40                 | ≥ 4.0               | Consider intervention if symptomatic |
+| Very Severe AS       | ≤ 0.6 cm²               | ≥ 60                 | ≥ 5.0               | High risk of events    |
+
+**Sources**: AHA/ACC 2020 Valve Guidelines, ESC 2021 Valvular Heart Disease Guidelines
