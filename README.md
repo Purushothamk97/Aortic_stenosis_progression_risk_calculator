@@ -16,19 +16,19 @@ Built entirely with HTML, CSS, and JavaScript — no backend or server required.
 
 The core coefficients come from the 2024 multivariable linear regression model published by **Venema CS et al.** in *JACC: Advances*:
 
-- CKD (eGFR <60): -0.059 cm²/year
-- Atrial fibrillation: -0.021 cm²/year
-- Age: -0.0013 cm²/year per year
-- LV mass index: -0.00038 cm²/year per g/m²
-- Stroke volume index: -0.0008 cm²/year per mL/m²
+- CKD (eGFR <60): 0.059 cm²/year lost
+- Atrial fibrillation: 0.021 cm²/year lost
+- Age: 0.0013 cm²/year lost per year
+- LV mass index: 0.00038 cm²/year lost per g/m²
+- Stroke volume index: 0.0008 cm²/year lost per mL/m²
 
 Modifiable factors use approximate weights derived from hazard ratios in supporting studies (CANHEART 2017, Ko et al. 2022, etc.).  
-Average observed decline in literature: ≈ -0.08 cm²/year.
+Average observed decline in literature: ≈ **0.08 cm²/year** lost.
 
 **Risk thresholds** (informed by study quartiles):
-- High: < -0.12 cm²/year (rapid progressors)
-- Medium: -0.08 to -0.12 cm²/year
-- Low: > -0.08 cm²/year (slower than average)
+- High: > 0.12 cm²/year lost (rapid progressors)
+- Medium: 0.08 – 0.12 cm²/year lost
+- Low: < 0.08 cm²/year lost (slower than average)
 
 **Important disclaimer**  
 This is an **educational / research prototype**, **not** a validated clinical decision tool.  
