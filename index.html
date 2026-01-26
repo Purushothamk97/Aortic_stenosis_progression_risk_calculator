@@ -67,8 +67,7 @@
       margin: 1.5rem 0;
       font-size: 0.95rem;
     }
-    table.risk-table th, table.risk-table td,
-    table.reference-table th, table.reference-table td {
+    table th, table td {
       border: 1px solid #dee2e6;
       padding: 0.8rem;
       text-align: left;
@@ -135,8 +134,8 @@
 </head>
 <body>
   <h1>Aortic Stenosis Progression Risk Calculator</h1>
-  <p>This calculator estimates the annual decline in Aortic Valve Area (AVA) based on collated research data points from studies on AS progression. Weights are derived from regression coefficients where available (e.g., age, CKD, AF) and approximated for modifiable factors like diabetes and hypertension based on hazard ratios and associations from meta-analyses. A more negative decline indicates faster progression.</p>
-  <p>Note: This is a simplified tool for educational purposes, not medical advice. Consult a physician for clinical use.</p>
+  <p>This calculator estimates the annual **rate of decline** in Aortic Valve Area (AVA) based on published research. A **higher positive number** means faster loss of valve area (faster progression).</p>
+  <p>Note: This is a simplified educational tool, not medical advice. Consult a cardiologist for clinical decisions.</p>
 
   <div class="severity-section">
     <h3>Aortic Valve Area (AVA) Reference Table</h3>
@@ -197,28 +196,27 @@
   <div class="formula-section">
     <details>
       <summary>View the Underlying Formula & Weights</summary>
-      <p>The estimated annual AVA decline (cm²/year) is calculated as:</p>
+      <p>The estimated annual AVA decline (cm²/year lost) is calculated as a positive value:</p>
       <div class="formula-code">
-decline = 
-  -0.0013 × age 
-  + (if mean gradient > 20: -0.001 × (mean gradient - 20)) 
-  + (if eGFR < 60: -0.059) 
-  + (-0.021 × atrial fibrillation [0 or 1]) 
-  + (-0.020 × diabetes [0 or 1]) 
-  + (if SBP > 140: -0.020) 
-  + (if BMI > 30: -0.020) 
-  + (-0.020 × smoking [0 or 1]) 
-  + (if LDL > 100: -0.020) 
-  + (-0.00038 × LVMI [if provided]) 
-  + (-0.0008 × SVI [if provided])
+annual_decline = 
+  0.0013 × age 
+  + (if mean gradient > 20: 0.001 × (mean gradient - 20)) 
+  + (if eGFR < 60: 0.059) 
+  + (0.021 × atrial fibrillation [0 or 1]) 
+  + (0.020 × diabetes [0 or 1]) 
+  + (if SBP > 140: 0.020) 
+  + (if BMI > 30: 0.020) 
+  + (0.020 × smoking [0 or 1]) 
+  + (if LDL > 100: 0.020) 
+  + (0.00038 × LVMI [if provided]) 
+  + (0.0008 × SVI [if provided])
       </div>
       <p><strong>Notes on weights:</strong></p>
       <ul>
-        <li>Primary coefficients (-0.0013 per year age, -0.059 CKD, -0.021 AF, -0.00038 per g/m² LVMI, -0.0008 per mL/m² SVI) are directly from the 2024 Venema multivariable model.</li>
-        <li>Modifiable factor weights (~ -0.020) are approximations derived from hazard ratios (HR 1.06–1.71) in supporting studies (CANHEART, Ko et al.).</li>
-        <li>Baseline mean gradient adjustment is a scaled approximation from meta-regression showing faster decline with higher severity.</li>
+        <li>Higher value = faster progression</li>
+        <li>Primary coefficients are from the 2024 Venema multivariable model (absolute values used here)</li>
+        <li>Modifiable factor weights (~0.020) are approximations derived from hazard ratios in supporting studies</li>
       </ul>
-      <p>Risk thresholds are informed by the study's observed distribution: median -0.09 cm²/year, rapid progressors ~-0.15, slow ~-0.04.</p>
     </details>
   </div>
   
@@ -242,7 +240,7 @@ decline =
     <thead>
       <tr>
         <th>Risk Category</th>
-        <th>Annual AVA Decline Threshold</th>
+        <th>Annual AVA Decline (cm²/year lost)</th>
         <th>Description</th>
         <th>Typical Surveillance</th>
         <th>Key Considerations</th>
@@ -251,21 +249,21 @@ decline =
     <tbody>
       <tr>
         <td class="risk-high">High Risk</td>
-        <td>< -0.12 cm²/year</td>
+        <td>> 0.12</td>
         <td>Rapid progression (top quartile in studies)</td>
         <td>Every 6–12 months</td>
         <td>Higher likelihood of early AVR if symptomatic; prioritize modifiable factors</td>
       </tr>
       <tr>
         <td class="risk-medium">Medium Risk</td>
-        <td>-0.08 to -0.12 cm²/year</td>
+        <td>0.08 – 0.12</td>
         <td>Average/moderate progression rate</td>
         <td>Every 1–2 years</td>
         <td>Standard guideline-based follow-up; optimize comorbidities</td>
       </tr>
       <tr>
         <td class="risk-low">Low Risk</td>
-        <td>> -0.08 cm²/year</td>
+        <td>< 0.08</td>
         <td>Slower than average progression</td>
         <td>Every 2–3 years (if mild/moderate)</td>
         <td>Lower urgency; maintain risk factor control</td>
@@ -280,14 +278,14 @@ decline =
         <span class="ref-title">Venema CS, et al. Prediction of the Individual Aortic Stenosis Progression Rate and its Association With Clinical Outcomes.</span> <a href="https://www.jacc.org/doi/10.1016/j.jacadv.2024.100879" target="_blank">JACC: Advances</a>. 2024. (Also available on <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC11198185" target="_blank">PubMed Central</a>.)
         <details>
           <summary>Key Evidence</summary>
-          <p>Median AVA decrease: 0.09 cm²/y (IQR: 0.04-0.15 cm²/y); rapid progressors: 0.15 cm²/y vs. slow: 0.04 cm²/y. Multivariable model: Older age (-0.013 cm²/y per 10 years), AF (-0.021 cm²/y), CKD (-0.059 cm²/y), higher LVMI (-0.019 cm²/y per 50 g/m²), higher SVI (-0.008 cm²/y per 10 mL/m²). Rapid progression linked to higher mortality (HR 1.77) and AVR (HR 3.44).</p>
+          <p>Median AVA decrease: 0.09 cm²/y (IQR: 0.04-0.15 cm²/y); rapid progressors: 0.15 cm²/y vs. slow: 0.04 cm²/y. Multivariable model: Older age (0.013 cm²/y per 10 years), AF (0.021 cm²/y), CKD (0.059 cm²/y), higher LVMI (0.019 cm²/y per 50 g/m²), higher SVI (0.008 cm²/y per 10 mL/m²). Rapid progression linked to higher mortality (HR 1.77) and AVR (HR 3.44).</p>
         </details>
       </li>
       <li>
         <span class="ref-title">Capoulade R, et al. Aortic Stenosis Progression: A Systematic Review and Meta-Analysis.</span> <a href="https://www.jacc.org/doi/10.1016/j.jcmg.2022.10.009" target="_blank">JACC: Cardiovascular Imaging</a>. 2023.
         <details>
           <summary>Key Evidence</summary>
-          <p>Pooled AVA decline: -0.08 cm²/year (95% CI: 0.06-0.10). Faster in severe baseline AS (0.09 cm²/year) vs. mild (0.07 cm²/year).</p>
+          <p>Pooled AVA decline: 0.08 cm²/year (95% CI: 0.06-0.10). Faster in severe baseline AS (0.09 cm²/year) vs. mild (0.07 cm²/year).</p>
         </details>
       </li>
       <li>
@@ -323,32 +321,32 @@ decline =
       
       let decline = 0;
       
-      decline += -0.0013 * age;
-      if (mg > 20) decline += -0.001 * (mg - 20);
-      if (egfr < 60) decline += -0.059;
-      decline += -0.021 * af;
-      decline += -0.020 * diabetes;
-      if (sbp > 140) decline += -0.020;
-      if (bmi > 30) decline += -0.020;
-      decline += -0.020 * smoking;
-      if (ldl > 100) decline += -0.020;
-      if (lvmi > 0) decline += -0.00038 * lvmi;
-      if (svi > 0) decline += -0.0008 * svi;
+      decline += 0.0013 * age;
+      if (mg > 20) decline += 0.001 * (mg - 20);
+      if (egfr < 60) decline += 0.059;
+      decline += 0.021 * af;
+      decline += 0.020 * diabetes;
+      if (sbp > 140) decline += 0.020;
+      if (bmi > 30) decline += 0.020;
+      decline += 0.020 * smoking;
+      if (ldl > 100) decline += 0.020;
+      if (lvmi > 0) decline += 0.00038 * lvmi;
+      if (svi > 0) decline += 0.0008 * svi;
       
       let risk = '';
       let riskClass = '';
       let riskDescription = '';
       let implications = '';
 
-      if (decline < -0.12) {
+      if (decline > 0.12) {
         risk = 'High Risk';
         riskClass = 'risk-high';
-        riskDescription = 'Rapid progression likely (faster than the 75th percentile in key studies)';
+        riskDescription = 'Rapid progression likely (top quartile in studies)';
         implications = 'More frequent echocardiographic surveillance (every 6–12 months), earlier consideration of intervention if symptoms develop or severe AS criteria met, aggressive management of modifiable factors.';
-      } else if (decline < -0.08) {
+      } else if (decline >= 0.08) {
         risk = 'Medium Risk';
         riskClass = 'risk-medium';
-        riskDescription = 'Moderate progression (around the median/average observed rate)';
+        riskDescription = 'Average/moderate progression rate';
         implications = 'Standard surveillance (every 1–2 years depending on baseline severity), optimize modifiable risk factors, monitor closely for symptom onset.';
       } else {
         risk = 'Low Risk';
@@ -372,7 +370,7 @@ decline =
       }
       
       document.getElementById('result').innerHTML = `
-        <h2>Estimated Annual AVA Decline: ${decline.toFixed(3)} cm²/year</h2>
+        <h2>Estimated Annual AVA Decline: ${decline.toFixed(3)} cm²/year lost</h2>
         <p class="${riskClass}"><strong>Risk Category: ${risk}</strong></p>
         <p><strong>Description:</strong> ${riskDescription}</p>
         <p><strong>Clinical Implications:</strong> ${implications}</p>
@@ -381,7 +379,7 @@ decline =
           <thead>
             <tr>
               <th>Risk Category</th>
-              <th>Annual AVA Decline Threshold</th>
+              <th>Annual AVA Decline (cm²/year lost)</th>
               <th>Description</th>
               <th>Typical Surveillance</th>
               <th>Key Considerations</th>
@@ -390,21 +388,21 @@ decline =
           <tbody>
             <tr>
               <td class="risk-high">High Risk</td>
-              <td>< -0.12 cm²/year</td>
+              <td>> 0.12</td>
               <td>Rapid progression (top quartile in studies)</td>
               <td>Every 6–12 months</td>
               <td>Higher likelihood of early AVR if symptomatic; prioritize modifiable factors</td>
             </tr>
             <tr>
               <td class="risk-medium">Medium Risk</td>
-              <td>-0.08 to -0.12 cm²/year</td>
+              <td>0.08 – 0.12</td>
               <td>Average/moderate progression rate</td>
               <td>Every 1–2 years</td>
               <td>Standard guideline-based follow-up; optimize comorbidities</td>
             </tr>
             <tr>
               <td class="risk-low">Low Risk</td>
-              <td>> -0.08 cm²/year</td>
+              <td>< 0.08</td>
               <td>Slower than average progression</td>
               <td>Every 2–3 years (if mild/moderate)</td>
               <td>Lower urgency; maintain risk factor control</td>
@@ -412,7 +410,7 @@ decline =
           </tbody>
         </table>
 
-        <p>Average decline from studies is about -0.08 cm²/year. Modifiable factors can be targeted to potentially slow progression.</p>
+        <p>Average observed decline in studies is about 0.08 cm²/year. Modifiable factors can be targeted to potentially slow progression.</p>
         ${modifiableHTML}
       `;
     }
