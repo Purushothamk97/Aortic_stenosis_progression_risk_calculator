@@ -1,203 +1,381 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Aortic Stenosis Progression Risk Calculator</title>
-  <style>
-    body { 
-      font-family: sans-serif; 
-      max-width: 800px; 
-      margin: 2rem auto; 
-      padding: 1rem; 
-      background-color: #f8f9fa; 
-      color: #333; 
-    }
-    h1 { color: #0056b3; }
-    h3 { margin-top: 0; color: #0056b3; }
-    label { 
-      display: block; 
-      margin: 1.2rem 0 0.4rem; 
-      font-weight: bold; 
-      color: #004085; 
-    }
-    input[type="number"], 
-    input[type="checkbox"] { 
-      margin-right: 0.5rem; 
-      padding: 0.5rem; 
-      width: 100px; 
-      border: 1px solid #ced4da; 
-      border-radius: 4px; 
-      background-color: #ffffff; 
-      transition: background-color 0.2s;
-    }
-    input[type="number"]:focus, 
-    input[type="checkbox"]:focus { 
-      background-color: #e9ecef; 
-      outline: none; 
-      border-color: #80bdff; 
-    }
-    input[type="number"] { 
-      background-color: #f8f9fa; 
-    }
-    button { 
-      margin-top: 2rem; 
-      padding: 0.9rem 2rem; 
-      background: #007bff; 
-      color: white; 
-      border: none; 
-      cursor: pointer; 
-      border-radius: 6px; 
-      font-size: 1.1rem;
-    }
-    button:hover { background: #0056b3; }
-    #result { 
-      margin-top: 2.5rem; 
-      padding: 1.5rem; 
-      border: 1px solid #dee2e6; 
-      background: #ffffff; 
-      border-radius: 6px; 
-      box-shadow: 0 3px 6px rgba(0,0,0,0.08); 
-    }
-    .risk-high { color: #dc3545; font-weight: bold; }
-    .risk-medium { color: #fd7e14; font-weight: bold; }
-    .risk-low { color: #28a745; font-weight: bold; }
-    table.risk-table, table.reference-table {
-      width: 100%;
-      border-collapse: collapse;
-      margin: 1.5rem 0;
-      font-size: 0.95rem;
-    }
-    table th, table td {
-      border: 1px solid #dee2e6;
-      padding: 0.8rem;
-      text-align: left;
-    }
-    table th {
-      background-color: #e9ecef;
-      font-weight: bold;
-    }
-    table tr:nth-child(even) {
-      background-color: #f8f9fa;
-    }
-    .formula-section, .severity-section {
-      margin: 2rem 0;
-      padding: 1rem;
-      background: #f1f3f5;
-      border-radius: 6px;
-      border-left: 4px solid #6c757d;
-    }
-    .formula-section details, .severity-section details {
-      margin-top: 0.8rem;
-    }
-    .formula-section summary, .severity-section summary {
-      cursor: pointer;
-      font-weight: bold;
-      color: #0056b3;
-      padding: 0.5rem 0;
-    }
-    .formula-code {
-      background: #ffffff;
-      padding: 1rem;
-      border: 1px solid #ced4da;
-      border-radius: 4px;
-      font-family: monospace;
-      white-space: pre-wrap;
-      overflow-x: auto;
-      margin: 1rem 0;
-    }
-    .references { 
-      margin-top: 4rem; 
-      padding: 1.5rem; 
-      background: #f1f3f5; 
-      border-radius: 6px; 
-    }
-    .references h2 { color: #0056b3; }
-    .references ol { 
-      padding-left: 1.8rem; 
-      list-style-type: decimal; 
-    }
-    .references li { 
-      margin-bottom: 1.5rem; 
-      font-size: 0.95rem; 
-    }
-    .ref-title { font-weight: bold; color: #212529; }
-    a { color: #0069d9; text-decoration: none; }
-    a:hover { text-decoration: underline; }
-    .modifiable-list { margin-top: 1rem; list-style-type: disc; padding-left: 1.5rem; }
-    details p { 
-      margin: 0.6rem 0 0 1.2rem; 
-      padding-left: 1rem; 
-      border-left: 3px solid #adb5bd; 
-      color: #495057; 
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aortic Stenosis Progression Risk Calculator</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
+
+    <style>
+        body { 
+            font-family: 'Inter', sans-serif; 
+            background-color: #f8fafc; 
+            color: #1e293b;
+        }
+        
+        h1, h2, h3, h4, h5, .font-display { 
+            font-family: 'Plus Jakarta Sans', sans-serif; 
+        }
+
+        /* Custom Toggle Switch */
+        .toggle-checkbox:checked {
+            right: 0;
+            border-color: #3b82f6;
+        }
+        .toggle-checkbox:checked + .toggle-label {
+            background-color: #3b82f6;
+        }
+        .toggle-checkbox {
+            right: 24px;
+            z-index: 1;
+            border-color: #e2e8f0;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .toggle-label {
+            background-color: #cbd5e1;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        /* Input styling */
+        .input-field {
+            transition: all 0.2s;
+        }
+        .input-field:focus {
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+        }
+
+        /* Details/Summary animation */
+        details > summary { list-style: none; }
+        details > summary::-webkit-details-marker { display: none; }
+        
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(226, 232, 240, 0.8);
+        }
+
+        /* AI Markdown Parsing Styles */
+        .ai-content strong { color: #0f172a; font-weight: 700; }
+        .ai-content p { margin-bottom: 0.75rem; }
+        .ai-content ul { list-style-type: disc; padding-left: 1.5rem; margin-bottom: 0.75rem; }
+        
+        /* Spinner */
+        .loader {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #3b82f6;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            animation: spin 1s linear infinite;
+            display: inline-block;
+            vertical-align: middle;
+        }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    </style>
 </head>
-<body>
-  <h1>Aortic Stenosis Progression Risk Calculator</h1>
-  <p>This calculator estimates the annual **rate of decline** in Aortic Valve Area (AVA) based on published research. A **higher positive number** means faster loss of valve area (faster progression).</p>
-  <p>Note: This is a simplified educational tool, not medical advice. Consult a cardiologist for clinical decisions.</p>
+<body class="antialiased selection:bg-blue-100 selection:text-blue-900">
 
-  <div class="severity-section">
-    <h3>Aortic Valve Area (AVA) Reference Table</h3>
-    <p>Standard classification of aortic stenosis severity (at rest, per current guidelines).</p>
-    <table class="reference-table">
-      <thead>
-        <tr>
-          <th>Severity Grade</th>
-          <th>Aortic Valve Area (AVA)</th>
-          <th>Mean Gradient (mmHg)</th>
-          <th>Peak Velocity (m/s)</th>
-          <th>Typical Notes</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td>Normal</td>
-          <td>> 2.0 cm²</td>
-          <td>< 10</td>
-          <td>< 2.0</td>
-          <td>No stenosis</td>
-        </tr>
-        <tr>
-          <td>Mild AS</td>
-          <td>1.5 – 2.0 cm²</td>
-          <td>< 20</td>
-          <td>< 3.0</td>
-          <td>Often asymptomatic</td>
-        </tr>
-        <tr>
-          <td>Moderate AS</td>
-          <td>1.0 – 1.5 cm²</td>
-          <td>20 – 40</td>
-          <td>3.0 – 4.0</td>
-          <td>Surveillance recommended</td>
-        </tr>
-        <tr>
-          <td>Severe AS</td>
-          <td>≤ 1.0 cm²</td>
-          <td>≥ 40</td>
-          <td>≥ 4.0</td>
-          <td>Consider intervention if symptomatic</td>
-        </tr>
-        <tr>
-          <td>Very Severe AS</td>
-          <td>≤ 0.6 cm²</td>
-          <td>≥ 60</td>
-          <td>≥ 5.0</td>
-          <td>High risk of events</td>
-        </tr>
-      </tbody>
-    </table>
-    <p style="font-size: 0.9rem; margin-top: 1rem; color: #495057;">
-      <strong>Sources</strong>: AHA/ACC 2020 Valvular Heart Disease Guidelines, ESC 2021 Valvular Heart Disease Guidelines
-    </p>
-  </div>
+    <!-- Header -->
+    <header class="bg-slate-900 text-white pt-16 pb-24 border-b-4 border-blue-600 relative overflow-hidden">
+        <div class="absolute inset-0 opacity-10 bg-[radial-gradient(circle_at_100%_0%,rgba(59,130,246,0.8)_0%,transparent_50%)]"></div>
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-500/20 border border-blue-400/30 text-blue-300 text-xs font-bold tracking-widest uppercase mb-6">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/></svg>
+                Clinical Cardiology Tool
+            </div>
+            <h1 class="text-4xl md:text-5xl font-extrabold mb-4 font-display tracking-tight">Aortic Stenosis Progression Calculator</h1>
+            <p class="text-lg text-slate-300 max-w-2xl font-light">
+                Estimates the annual rate of decline in Aortic Valve Area (AVA) based on multivariable clinical models. A higher positive value indicates faster disease progression.
+            </p>
+        </div>
+    </header>
 
-  <div class="formula-section">
-    <details>
-      <summary>View the Underlying Formula & Weights</summary>
-      <p>The estimated annual AVA decline (cm²/year lost) is calculated as a positive value:</p>
-      <div class="formula-code">
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 -mt-16 relative z-20">
+        
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+            
+            <!-- Left Column: Inputs -->
+            <div class="lg:col-span-6 xl:col-span-5 space-y-6">
+                <div class="bg-white rounded-2xl shadow-xl shadow-slate-200/40 border border-slate-200 p-6 sm:p-8">
+                    <h2 class="text-2xl font-bold text-slate-800 mb-6 font-display flex items-center gap-3">
+                        <div class="w-8 h-8 rounded-lg bg-blue-100 text-blue-600 flex items-center justify-center">1</div>
+                        Patient Parameters
+                    </h2>
+
+                    <form id="calc-form" class="space-y-8" onsubmit="event.preventDefault(); calculateRisk();">
+                        
+                        <!-- Demographics & Vitals -->
+                        <div>
+                            <h3 class="text-sm font-bold text-slate-400 uppercase tracking-wider border-b border-slate-100 pb-2 mb-4">Demographics & Vitals</h3>
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                                <div>
+                                    <label class="block text-sm font-semibold text-slate-700 mb-1" for="age">Age</label>
+                                    <div class="relative">
+                                        <input type="number" id="age" value="70" min="0" class="input-field w-full pl-4 pr-12 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 font-medium focus:outline-none focus:border-blue-500 focus:bg-white transition-colors">
+                                        <span class="absolute right-4 top-2.5 text-slate-400 text-sm">years</span>
+                                    </div>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-semibold text-slate-700 mb-1" for="bmi">BMI</label>
+                                    <div class="relative">
+                                        <input type="number" id="bmi" value="25" min="0" step="0.1" class="input-field w-full pl-4 pr-14 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 font-medium focus:outline-none focus:border-blue-500 focus:bg-white transition-colors">
+                                        <span class="absolute right-4 top-2.5 text-slate-400 text-sm">kg/m²</span>
+                                    </div>
+                                </div>
+                                <div class="sm:col-span-2">
+                                    <label class="block text-sm font-semibold text-slate-700 mb-1" for="sbp">Systolic BP</label>
+                                    <div class="relative">
+                                        <input type="number" id="sbp" value="120" min="0" class="input-field w-full pl-4 pr-16 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 font-medium focus:outline-none focus:border-blue-500 focus:bg-white transition-colors">
+                                        <span class="absolute right-4 top-2.5 text-slate-400 text-sm">mmHg</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Labs & Hemodynamics -->
+                        <div>
+                            <h3 class="text-sm font-bold text-slate-400 uppercase tracking-wider border-b border-slate-100 pb-2 mb-4">Labs & Hemodynamics</h3>
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                                <div class="sm:col-span-2">
+                                    <label class="block text-sm font-semibold text-slate-700 mb-1" for="mg">Baseline Mean Gradient</label>
+                                    <div class="relative">
+                                        <input type="number" id="mg" value="20" min="0" class="input-field w-full pl-4 pr-16 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 font-medium focus:outline-none focus:border-blue-500 focus:bg-white transition-colors">
+                                        <span class="absolute right-4 top-2.5 text-slate-400 text-sm">mmHg</span>
+                                    </div>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-semibold text-slate-700 mb-1" for="egfr">eGFR</label>
+                                    <div class="relative">
+                                        <input type="number" id="egfr" value="80" min="0" class="input-field w-full pl-4 pr-24 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 font-medium focus:outline-none focus:border-blue-500 focus:bg-white transition-colors">
+                                        <span class="absolute right-4 top-2.5 text-slate-400 text-sm">mL/min/1.73</span>
+                                    </div>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-semibold text-slate-700 mb-1" for="ldl">LDL Cholesterol</label>
+                                    <div class="relative">
+                                        <input type="number" id="ldl" value="90" min="0" class="input-field w-full pl-4 pr-16 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 font-medium focus:outline-none focus:border-blue-500 focus:bg-white transition-colors">
+                                        <span class="absolute right-4 top-2.5 text-slate-400 text-sm">mg/dL</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Echocardiography Extras -->
+                        <div>
+                            <h3 class="text-sm font-bold text-slate-400 uppercase tracking-wider border-b border-slate-100 pb-2 mb-4">Advanced Echo (Optional)</h3>
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                                <div>
+                                    <label class="block text-sm font-semibold text-slate-700 mb-1" for="lvmi">LV Mass Index</label>
+                                    <div class="relative">
+                                        <input type="number" id="lvmi" value="0" min="0" class="input-field w-full pl-4 pr-14 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 font-medium focus:outline-none focus:border-blue-500 focus:bg-white transition-colors placeholder:text-slate-300" placeholder="Optional">
+                                        <span class="absolute right-4 top-2.5 text-slate-400 text-sm">g/m²</span>
+                                    </div>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-semibold text-slate-700 mb-1" for="svi">Stroke Volume Index</label>
+                                    <div class="relative">
+                                        <input type="number" id="svi" value="0" min="0" class="input-field w-full pl-4 pr-16 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 font-medium focus:outline-none focus:border-blue-500 focus:bg-white transition-colors placeholder:text-slate-300" placeholder="Optional">
+                                        <span class="absolute right-4 top-2.5 text-slate-400 text-sm">mL/m²</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Clinical History Toggles -->
+                        <div>
+                            <h3 class="text-sm font-bold text-slate-400 uppercase tracking-wider border-b border-slate-100 pb-2 mb-4">Clinical History</h3>
+                            <div class="flex flex-col gap-3">
+                                <!-- Toggle 1 -->
+                                <div class="flex items-center justify-between p-3 border border-slate-200 rounded-xl bg-slate-50">
+                                    <span class="text-sm font-semibold text-slate-700">Atrial Fibrillation</span>
+                                    <div class="relative inline-block w-12 mr-2 align-middle select-none">
+                                        <input type="checkbox" name="toggle" id="af" class="toggle-checkbox absolute block w-6 h-6 rounded-full bg-white border-4 appearance-none cursor-pointer"/>
+                                        <label for="af" class="toggle-label block overflow-hidden h-6 rounded-full bg-gray-300 cursor-pointer"></label>
+                                    </div>
+                                </div>
+                                <!-- Toggle 2 -->
+                                <div class="flex items-center justify-between p-3 border border-slate-200 rounded-xl bg-slate-50">
+                                    <span class="text-sm font-semibold text-slate-700">Diabetes</span>
+                                    <div class="relative inline-block w-12 mr-2 align-middle select-none">
+                                        <input type="checkbox" name="toggle" id="diabetes" class="toggle-checkbox absolute block w-6 h-6 rounded-full bg-white border-4 appearance-none cursor-pointer"/>
+                                        <label for="diabetes" class="toggle-label block overflow-hidden h-6 rounded-full bg-gray-300 cursor-pointer"></label>
+                                    </div>
+                                </div>
+                                <!-- Toggle 3 -->
+                                <div class="flex items-center justify-between p-3 border border-slate-200 rounded-xl bg-slate-50">
+                                    <span class="text-sm font-semibold text-slate-700">Current Smoker</span>
+                                    <div class="relative inline-block w-12 mr-2 align-middle select-none">
+                                        <input type="checkbox" name="toggle" id="smoking" class="toggle-checkbox absolute block w-6 h-6 rounded-full bg-white border-4 appearance-none cursor-pointer"/>
+                                        <label for="smoking" class="toggle-label block overflow-hidden h-6 rounded-full bg-gray-300 cursor-pointer"></label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <button type="submit" class="w-full py-4 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl text-lg shadow-lg shadow-blue-600/30 transition-all transform hover:-translate-y-0.5">
+                            Calculate Progression Risk
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Right Column: Results & AI Assistant -->
+            <div class="lg:col-span-6 xl:col-span-7 space-y-6">
+                
+                <!-- Results Panel (Sticky behavior removed to accommodate AI features) -->
+                <div id="results-panel" class="bg-white rounded-2xl shadow-xl shadow-slate-200/50 border border-slate-200 overflow-hidden transition-all duration-500 h-full min-h-[400px] flex flex-col relative">
+                    
+                    <!-- Initial Empty State -->
+                    <div id="empty-state" class="flex-1 flex flex-col items-center justify-center p-10 text-center">
+                        <div class="w-20 h-20 bg-slate-50 rounded-full flex items-center justify-center mb-4 border-2 border-dashed border-slate-200">
+                            <svg class="w-8 h-8 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                        </div>
+                        <h3 class="text-lg font-bold text-slate-700 font-display">Awaiting Calculation</h3>
+                        <p class="text-slate-500 text-sm mt-2">Enter patient parameters and click calculate to view the estimated progression risk.</p>
+                    </div>
+
+                    <!-- Populated Results State (Hidden initially) -->
+                    <div id="populated-state" class="hidden flex-1 flex flex-col">
+                        <!-- Dynamic Header Base on Risk -->
+                        <div id="risk-header" class="p-8 text-white transition-colors duration-500 bg-slate-800">
+                            <div class="flex justify-between items-start mb-6">
+                                <div>
+                                    <p class="text-white/80 text-sm font-semibold uppercase tracking-widest mb-1">Estimated Progression</p>
+                                    <div class="flex items-baseline gap-2">
+                                        <span id="res-decline" class="text-5xl font-black font-display tracking-tighter">0.000</span>
+                                        <span class="text-lg text-white/80">cm²/yr</span>
+                                    </div>
+                                </div>
+                                <div id="risk-icon" class="w-12 h-12 rounded-full bg-white/20 backdrop-blur flex items-center justify-center">
+                                    <!-- Icon injected via JS -->
+                                </div>
+                            </div>
+                            <div class="inline-block px-3 py-1 bg-white/20 backdrop-blur rounded-lg border border-white/20 font-bold text-sm tracking-wide" id="res-category">
+                                Risk Category
+                            </div>
+                        </div>
+
+                        <div class="p-8 flex-1 bg-white">
+                            <div class="mb-6">
+                                <h4 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Clinical Interpretation</h4>
+                                <p id="res-description" class="text-slate-800 font-medium text-lg leading-snug"></p>
+                            </div>
+                            
+                            <div class="mb-6">
+                                <h4 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Recommended Action</h4>
+                                <p id="res-implications" class="text-slate-600 text-sm leading-relaxed"></p>
+                            </div>
+
+                            <div class="pt-6 border-t border-slate-100">
+                                <h4 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3">Modifiable Risk Targets</h4>
+                                <div id="res-modifiable" class="space-y-2">
+                                    <!-- Pills injected via JS -->
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- AI Tools Section (Visible only after calculation) -->
+                        <div class="bg-indigo-50 border-t border-indigo-100 p-6">
+                            <h4 class="text-sm font-bold text-indigo-900 font-display flex items-center gap-2 mb-4">
+                                <svg class="w-4 h-4 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+                                AI Clinical Assistant
+                            </h4>
+                            
+                            <!-- Local API Key Input -->
+                            <div class="mb-4 bg-white p-4 rounded-xl border border-indigo-100 shadow-sm">
+                                <label class="block text-xs font-semibold text-slate-600 mb-1" for="api-key-input">Gemini API Key (Required for AI features)</label>
+                                <input type="password" id="api-key-input" placeholder="Paste your AIzaSy... key here" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-slate-900 text-sm focus:outline-none focus:border-indigo-500 transition-colors">
+                                <p class="text-[10px] text-slate-400 mt-1.5 flex items-center gap-1">
+                                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
+                                    Your key is used locally in your browser and is never stored.
+                                </p>
+                            </div>
+
+                            <div class="flex flex-col sm:flex-row gap-3">
+                                <button onclick="generateAI('ehr')" class="flex-1 py-2.5 px-4 bg-white border border-indigo-200 hover:border-indigo-400 hover:shadow-md text-indigo-700 font-semibold rounded-xl text-sm transition-all flex justify-center items-center gap-2">
+                                    <span>✨</span> Draft EHR Note
+                                </button>
+                                <button onclick="generateAI('patient')" class="flex-1 py-2.5 px-4 bg-white border border-indigo-200 hover:border-indigo-400 hover:shadow-md text-indigo-700 font-semibold rounded-xl text-sm transition-all flex justify-center items-center gap-2">
+                                    <span>✨</span> Generate Patient Handout
+                                </button>
+                            </div>
+
+                            <!-- AI Output Container -->
+                            <div id="ai-output-container" class="hidden mt-4 bg-white rounded-xl border border-indigo-100 p-5 shadow-sm">
+                                <div class="flex justify-between items-center border-b border-slate-100 pb-2 mb-3">
+                                    <span id="ai-output-title" class="text-xs font-bold text-slate-500 uppercase tracking-wider">Output</span>
+                                    <button onclick="document.getElementById('ai-output-container').classList.add('hidden')" class="text-slate-400 hover:text-slate-600">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                                    </button>
+                                </div>
+                                <div id="ai-loading" class="hidden text-center py-6">
+                                    <div class="loader mb-3"></div>
+                                    <p class="text-sm text-indigo-500 font-medium">Generating using Gemini AI...</p>
+                                </div>
+                                <div id="ai-result-content" class="text-sm text-slate-700 leading-relaxed ai-content whitespace-pre-line hidden">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- Reference Materials Section -->
+        <div class="mt-16 space-y-6">
+            <h2 class="text-2xl font-bold text-slate-800 font-display">Reference Materials</h2>
+            
+            <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+                
+                <!-- Accordion 1: Reference Table -->
+                <details class="group" open>
+                    <summary class="flex justify-between items-center font-medium cursor-pointer list-none p-6 bg-slate-50/50 hover:bg-slate-50 transition-colors border-b border-slate-200">
+                        <span class="font-bold text-slate-800 font-display text-lg">Aortic Valve Area (AVA) Reference Guidelines</span>
+                        <span class="transition group-open:rotate-180">
+                            <svg fill="none" height="24" shape-rendering="geometricPrecision" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" viewBox="0 0 24 24" width="24" class="text-slate-500"><path d="M6 9l6 6 6-6"></path></svg>
+                        </span>
+                    </summary>
+                    <div class="p-6 text-slate-600">
+                        <p class="mb-4 text-sm">Standard classification of aortic stenosis severity (at rest, per AHA/ACC 2020 & ESC 2021 Guidelines).</p>
+                        <div class="overflow-x-auto rounded-xl border border-slate-200">
+                            <table class="min-w-full text-sm text-left">
+                                <thead class="bg-slate-100 text-slate-700 uppercase text-xs font-bold">
+                                    <tr>
+                                        <th class="px-4 py-3 border-b border-slate-200">Severity Grade</th>
+                                        <th class="px-4 py-3 border-b border-slate-200">AVA (cm²)</th>
+                                        <th class="px-4 py-3 border-b border-slate-200">Mean Grad. (mmHg)</th>
+                                        <th class="px-4 py-3 border-b border-slate-200">Peak Vel. (m/s)</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="divide-y divide-slate-100 bg-white">
+                                    <tr><td class="px-4 py-3 font-medium text-slate-800">Normal</td><td class="px-4 py-3">> 2.0</td><td class="px-4 py-3">< 10</td><td class="px-4 py-3">< 2.0</td></tr>
+                                    <tr class="bg-slate-50"><td class="px-4 py-3 font-medium text-slate-800">Mild AS</td><td class="px-4 py-3">1.5 – 2.0</td><td class="px-4 py-3">< 20</td><td class="px-4 py-3">< 3.0</td></tr>
+                                    <tr><td class="px-4 py-3 font-medium text-amber-700">Moderate AS</td><td class="px-4 py-3">1.0 – 1.5</td><td class="px-4 py-3">20 – 40</td><td class="px-4 py-3">3.0 – 4.0</td></tr>
+                                    <tr class="bg-rose-50/30"><td class="px-4 py-3 font-medium text-rose-700">Severe AS</td><td class="px-4 py-3">≤ 1.0</td><td class="px-4 py-3">≥ 40</td><td class="px-4 py-3">≥ 4.0</td></tr>
+                                    <tr class="bg-rose-100/30"><td class="px-4 py-3 font-bold text-rose-800">Very Severe AS</td><td class="px-4 py-3">≤ 0.6</td><td class="px-4 py-3">≥ 60</td><td class="px-4 py-3">≥ 5.0</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </details>
+
+                <!-- Accordion 2: Formula -->
+                <details class="group">
+                    <summary class="flex justify-between items-center font-medium cursor-pointer list-none p-6 bg-slate-50/50 hover:bg-slate-50 transition-colors border-b border-slate-200">
+                        <span class="font-bold text-slate-800 font-display text-lg">Underlying Algorithm & Weights</span>
+                        <span class="transition group-open:rotate-180">
+                            <svg fill="none" height="24" shape-rendering="geometricPrecision" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" viewBox="0 0 24 24" width="24" class="text-slate-500"><path d="M6 9l6 6 6-6"></path></svg>
+                        </span>
+                    </summary>
+                    <div class="p-6 text-slate-600 text-sm">
+                        <p class="mb-4">The estimated annual AVA decline (cm²/year lost) is calculated as a positive value:</p>
+                        <div class="bg-slate-900 text-blue-300 p-4 rounded-xl font-mono text-xs overflow-x-auto leading-relaxed mb-4">
 annual_decline = 
   0.0013 × age 
   + (if mean gradient > 20: 0.001 × (mean gradient - 20)) 
@@ -210,175 +388,327 @@ annual_decline =
   + (if LDL > 100: 0.020) 
   + (0.00038 × LVMI [if provided]) 
   + (0.0008 × SVI [if provided])
-      </div>
-      <p><strong>Notes on weights:</strong></p>
-      <ul>
-        <li>Higher value = faster progression</li>
-        <li>Primary coefficients are from the 2024 Venema multivariable model (absolute values used here)</li>
-        <li>Modifiable factor weights (~0.020) are approximations derived from hazard ratios in supporting studies</li>
-      </ul>
-    </details>
-  </div>
-  
-  <label>Age (years): <input type="number" id="age" value="70" min="0"></label>
-  <label>Baseline Mean Gradient (mmHg): <input type="number" id="mg" value="20" min="0"></label>
-  <label>eGFR (mL/min/1.73m²): <input type="number" id="egfr" value="80" min="0"></label>
-  <label>Has Atrial Fibrillation? <input type="checkbox" id="af"></label>
-  <label>Has Diabetes? <input type="checkbox" id="diabetes"></label>
-  <label>Systolic Blood Pressure (mmHg): <input type="number" id="sbp" value="120" min="0"></label>
-  <label>BMI (kg/m²): <input type="number" id="bmi" value="25" min="0"></label>
-  <label>Current Smoker? <input type="checkbox" id="smoking"></label>
-  <label>LDL Cholesterol (mg/dL): <input type="number" id="ldl" value="90" min="0"></label>
-  <label>LV Mass Index (g/m², optional): <input type="number" id="lvmi" value="0" min="0"></label>
-  <label>Stroke Volume Index (mL/m², optional): <input type="number" id="svi" value="0" min="0"></label>
-  
-  <button onclick="calculate()">Calculate Risk</button>
-  
-  <div id="result"></div>
+                        </div>
+                        <ul class="list-disc pl-5 space-y-1">
+                            <li>Higher calculated value = faster progression.</li>
+                            <li>Primary coefficients derived from the 2024 Venema multivariable model.</li>
+                            <li>Modifiable factor weights (~0.020) are heuristic approximations derived from hazard ratios in supporting literature.</li>
+                        </ul>
+                    </div>
+                </details>
 
-  <div class="references">
-    <h2>References (Ordered by Importance in Model)</h2>
-    <ol>
-      <li>
-        <span class="ref-title">Venema CS, et al. Prediction of the Individual Aortic Stenosis Progression Rate and its Association With Clinical Outcomes.</span> <a href="https://www.jacc.org/doi/10.1016/j.jacadv.2024.100879" target="_blank">JACC: Advances</a>. 2024. (Also available on <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC11198185" target="_blank">PubMed Central</a>.)
-        <details>
-          <summary>Key Evidence</summary>
-          <p>Median AVA decrease: 0.09 cm²/y (IQR: 0.04-0.15 cm²/y); rapid progressors: 0.15 cm²/y vs. slow: 0.04 cm²/y. Multivariable model: Older age (0.013 cm²/y per 10 years), AF (0.021 cm²/y), CKD (0.059 cm²/y), higher LVMI (0.019 cm²/y per 50 g/m²), higher SVI (0.008 cm²/y per 10 mL/m²). Rapid progression linked to higher mortality (HR 1.77) and AVR (HR 3.44).</p>
-        </details>
-      </li>
-      <li>
-        <span class="ref-title">Capoulade R, et al. Aortic Stenosis Progression: A Systematic Review and Meta-Analysis.</span> <a href="https://www.jacc.org/doi/10.1016/j.jcmg.2022.10.009" target="_blank">JACC: Cardiovascular Imaging</a>. 2023.
-        <details>
-          <summary>Key Evidence</summary>
-          <p>Pooled AVA decline: 0.08 cm²/year (95% CI: 0.06-0.10). Faster in severe baseline AS (0.09 cm²/year) vs. mild (0.07 cm²/year).</p>
-        </details>
-      </li>
-      <li>
-        <span class="ref-title">Yan AT, et al. Association Between Cardiovascular Risk Factors and Aortic Stenosis: The CANHEART Aortic Stenosis Study.</span> <a href="https://www.jacc.org/doi/10.1016/j.jacc.2017.01.025" target="_blank">JACC</a>. 2017.
-        <details>
-          <summary>Key Evidence</summary>
-          <p>Hypertension: aHR 1.71, PAR 23.4%. Diabetes: aHR 1.49, PAR 5.6%. Dyslipidemia: aHR 1.17, PAR 4.4%. Combined PAR 34.4%.</p>
-        </details>
-      </li>
-      <li>
-        <span class="ref-title">Ko T-Y, et al. Incidence, risk factors and predictors of cardiovascular mortality for aortic stenosis among patients with diabetes mellitus.</span> <a href="https://www.sciencedirect.com/science/article/pii/S0168822722008646" target="_blank">Diabetes Research and Clinical Practice</a>. 2022.
-        <details>
-          <summary>Key Evidence</summary>
-          <p>In T2DM patients, AS incidence: 3.02 cases/1000 person-years. Risk factors include AF (aHR 1.69), statin protective (aHR 0.78).</p>
-        </details>
-      </li>
-    </ol>
-  </div>
+                <!-- Accordion 3: Literature -->
+                <details class="group">
+                    <summary class="flex justify-between items-center font-medium cursor-pointer list-none p-6 bg-slate-50/50 hover:bg-slate-50 transition-colors">
+                        <span class="font-bold text-slate-800 font-display text-lg">Supporting Literature</span>
+                        <span class="transition group-open:rotate-180">
+                            <svg fill="none" height="24" shape-rendering="geometricPrecision" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" viewBox="0 0 24 24" width="24" class="text-slate-500"><path d="M6 9l6 6 6-6"></path></svg>
+                        </span>
+                    </summary>
+                    <div class="p-6 text-slate-600 text-sm">
+                        <ol class="list-decimal pl-5 space-y-4">
+                            <li>
+                                <strong class="text-slate-800">Venema CS, et al.</strong> Prediction of the Individual Aortic Stenosis Progression Rate and its Association With Clinical Outcomes. <a href="#" class="text-blue-600 hover:underline">JACC: Advances</a>. 2024. 
+                                <p class="mt-1 text-slate-500 pl-4 border-l-2 border-slate-200">Median AVA decrease: 0.09 cm²/y (IQR: 0.04-0.15 cm²/y); rapid progressors: 0.15 cm²/y vs. slow: 0.04 cm²/y. Multivariable model: Older age (0.013 cm²/y per 10 years), AF (0.021 cm²/y), CKD (0.059 cm²/y), higher LVMI (0.019 cm²/y per 50 g/m²), higher SVI (0.008 cm²/y per 10 mL/m²).</p>
+                            </li>
+                            <li>
+                                <strong class="text-slate-800">Capoulade R, et al.</strong> Aortic Stenosis Progression: A Systematic Review and Meta-Analysis. <a href="#" class="text-blue-600 hover:underline">JACC: Cardiovascular Imaging</a>. 2023.
+                                <p class="mt-1 text-slate-500 pl-4 border-l-2 border-slate-200">Pooled AVA decline: 0.08 cm²/year (95% CI: 0.06-0.10). Faster in severe baseline AS (0.09 cm²/year) vs. mild (0.07 cm²/year).</p>
+                            </li>
+                            <li>
+                                <strong class="text-slate-800">Yan AT, et al.</strong> Association Between Cardiovascular Risk Factors and Aortic Stenosis. <a href="#" class="text-blue-600 hover:underline">JACC</a>. 2017.
+                                <p class="mt-1 text-slate-500 pl-4 border-l-2 border-slate-200">Hypertension: aHR 1.71, PAR 23.4%. Diabetes: aHR 1.49, PAR 5.6%. Dyslipidemia: aHR 1.17, PAR 4.4%. Combined PAR 34.4%.</p>
+                            </li>
+                            <li>
+                                <strong class="text-slate-800">Ko T-Y, et al.</strong> Incidence, risk factors and predictors of cardiovascular mortality for aortic stenosis among patients with diabetes mellitus. <a href="https://www.sciencedirect.com/science/article/pii/S0168822722008646" target="_blank" class="text-blue-600 hover:underline">Diabetes Research and Clinical Practice</a>. 2022.
+                                <p class="mt-1 text-slate-500 pl-4 border-l-2 border-slate-200">In T2DM patients, AS incidence: 3.02 cases/1000 person-years. Risk factors include AF (aHR 1.69), statin protective (aHR 0.78).</p>
+                            </li>
+                        </ol>
+                    </div>
+                </details>
 
-  <script>
-    function calculate() {
-      const age = parseFloat(document.getElementById('age').value) || 0;
-      const mg = parseFloat(document.getElementById('mg').value) || 0;
-      const egfr = parseFloat(document.getElementById('egfr').value) || 90;
-      const af = document.getElementById('af').checked ? 1 : 0;
-      const diabetes = document.getElementById('diabetes').checked ? 1 : 0;
-      const sbp = parseFloat(document.getElementById('sbp').value) || 120;
-      const bmi = parseFloat(document.getElementById('bmi').value) || 25;
-      const smoking = document.getElementById('smoking').checked ? 1 : 0;
-      const ldl = parseFloat(document.getElementById('ldl').value) || 90;
-      const lvmi = parseFloat(document.getElementById('lvmi').value) || 0;
-      const svi = parseFloat(document.getElementById('svi').value) || 0;
-      
-      let decline = 0;
-      
-      decline += 0.0013 * age;
-      if (mg > 20) decline += 0.001 * (mg - 20);
-      if (egfr < 60) decline += 0.059;
-      decline += 0.021 * af;
-      decline += 0.020 * diabetes;
-      if (sbp > 140) decline += 0.020;
-      if (bmi > 30) decline += 0.020;
-      decline += 0.020 * smoking;
-      if (ldl > 100) decline += 0.020;
-      if (lvmi > 0) decline += 0.00038 * lvmi;
-      if (svi > 0) decline += 0.0008 * svi;
-      
-      let risk = '';
-      let riskClass = '';
-      let riskDescription = '';
-      let implications = '';
+            </div>
+        </div>
 
-      if (decline > 0.12) {
-        risk = 'High Risk';
-        riskClass = 'risk-high';
-        riskDescription = 'Rapid progression likely (top quartile in studies)';
-        implications = 'More frequent echocardiographic surveillance (every 6–12 months), earlier consideration of intervention if symptoms develop or severe AS criteria met, aggressive management of modifiable factors.';
-      } else if (decline >= 0.08) {
-        risk = 'Medium Risk';
-        riskClass = 'risk-medium';
-        riskDescription = 'Average/moderate progression rate';
-        implications = 'Standard surveillance (every 1–2 years depending on baseline severity), optimize modifiable risk factors, monitor closely for symptom onset.';
-      } else {
-        risk = 'Low Risk';
-        riskClass = 'risk-low';
-        riskDescription = 'Slower than average progression';
-        implications = 'Less frequent monitoring may be appropriate (every 2–3 years if mild/moderate AS), continue lifestyle and risk factor optimization.';
-      }
-      
-      let modifiableFactors = [];
-      if (diabetes) modifiableFactors.push('Diabetes');
-      if (sbp > 140) modifiableFactors.push('Hypertension (SBP >140 mmHg)');
-      if (bmi > 30) modifiableFactors.push('Obesity (BMI >30 kg/m²)');
-      if (smoking) modifiableFactors.push('Smoking');
-      if (ldl > 100) modifiableFactors.push('Dyslipidemia (LDL >100 mg/dL)');
-      
-      let modifiableHTML = '';
-      if (modifiableFactors.length > 0) {
-        modifiableHTML = '<strong>Modifiable risk factors identified:</strong><ul class="modifiable-list">' + modifiableFactors.map(f => `<li>${f}</li>`).join('') + '</ul>';
-      } else {
-        modifiableHTML = '<p>No modifiable risk factors identified based on input; focus on regular monitoring and lifestyle maintenance.</p>';
-      }
-      
-      document.getElementById('result').innerHTML = `
-        <h2>Estimated Annual AVA Decline: ${decline.toFixed(3)} cm²/year lost</h2>
-        <p class="${riskClass}"><strong>Risk Category: ${risk}</strong></p>
-        <p><strong>Description:</strong> ${riskDescription}</p>
-        <p><strong>Clinical Implications:</strong> ${implications}</p>
-        
-        <table class="risk-table">
-          <thead>
-            <tr>
-              <th>Risk Category</th>
-              <th>Annual AVA Decline (cm²/year lost)</th>
-              <th>Description</th>
-              <th>Typical Surveillance</th>
-              <th>Key Considerations</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td class="risk-high">High Risk</td>
-              <td>> 0.12</td>
-              <td>Rapid progression (top quartile in studies)</td>
-              <td>Every 6–12 months</td>
-              <td>Higher likelihood of early AVR if symptomatic; prioritize modifiable factors</td>
-            </tr>
-            <tr>
-              <td class="risk-medium">Medium Risk</td>
-              <td>0.08 – 0.12</td>
-              <td>Average/moderate progression rate</td>
-              <td>Every 1–2 years</td>
-              <td>Standard guideline-based follow-up; optimize comorbidities</td>
-            </tr>
-            <tr>
-              <td class="risk-low">Low Risk</td>
-              <td>< 0.08</td>
-              <td>Slower than average progression</td>
-              <td>Every 2–3 years (if mild/moderate)</td>
-              <td>Lower urgency; maintain risk factor control</td>
-            </tr>
-          </tbody>
-        </table>
+    </main>
 
-        <p>Average observed decline in studies is about 0.08 cm²/year. Modifiable factors can be targeted to potentially slow progression.</p>
-        ${modifiableHTML}
-      `;
-    }
-  </script>
+    <!-- Footer -->
+    <footer class="bg-slate-50 border-t border-slate-200 py-10 mt-12 text-center text-slate-500 text-sm">
+        <p>This is a simplified educational tool, not medical advice. Consult a cardiologist for clinical decisions.</p>
+    </footer>
+
+    <script>
+        // Global state for AI context
+        let currentPatientData = {};
+
+        async function fetchWithBackoff(url, options) {
+            const delays = [1000, 2000, 4000, 8000, 16000];
+            for (let i = 0; i < delays.length + 1; i++) {
+                try {
+                    const response = await fetch(url, options);
+                    if (!response.ok) {
+                        const errText = await response.text();
+                        throw new Error(`HTTP error! status: ${response.status}, message: ${errText}`);
+                    }
+                    return await response.json();
+                } catch (error) {
+                    if (i === delays.length) throw error;
+                    await new Promise(resolve => setTimeout(resolve, delays[i]));
+                }
+            }
+        }
+
+        async function getAvailableModels(apiKey) {
+            const url = `https://generativelanguage.googleapis.com/v1beta/models?key=${apiKey}`;
+            const response = await fetchWithBackoff(url, { method: 'GET' });
+            
+            if (!response.models || response.models.length === 0) {
+                throw new Error("No models returned for this API key.");
+            }
+
+            // Filter for models that support text generation
+            const validModels = response.models
+                .filter(m => m.supportedGenerationMethods && m.supportedGenerationMethods.includes('generateContent') && m.name.includes('gemini'))
+                .map(m => m.name);
+
+            if (validModels.length === 0) {
+                throw new Error("No supported text generation models found for this API key.");
+            }
+
+            // Priority order: Try 1.5 models first (usually best free tier quotas), then 2.0, then 1.0
+            const preferredOrder = ['gemini-1.5-flash', 'gemini-1.5-pro', 'gemini-2.0-flash', 'gemini-pro'];
+            const sortedModels = [];
+            
+            for (const pref of preferredOrder) {
+                const matched = validModels.filter(m => m.includes(pref));
+                sortedModels.push(...matched);
+            }
+            
+            // Add any remaining models to the end of the list
+            for (const m of validModels) {
+                if (!sortedModels.includes(m)) sortedModels.push(m);
+            }
+
+            // Return deduplicated list
+            return [...new Set(sortedModels)];
+        }
+
+        async function generateAI(type) {
+            const container = document.getElementById('ai-output-container');
+            const loading = document.getElementById('ai-loading');
+            const resultContent = document.getElementById('ai-result-content');
+            const titleEl = document.getElementById('ai-output-title');
+            
+            // Get API Key directly from the UI input
+            const apiKey = document.getElementById('api-key-input').value.trim();
+
+            // Reset UI
+            container.classList.remove('hidden');
+            loading.classList.remove('hidden');
+            resultContent.classList.add('hidden');
+            resultContent.innerHTML = '';
+            
+            titleEl.textContent = type === 'ehr' ? 'Generated EHR Clinical Note' : 'Generated Patient Handout';
+
+            // Validate API Key
+            if (!apiKey) {
+                loading.classList.add('hidden');
+                resultContent.classList.remove('hidden');
+                resultContent.innerHTML = '<span class="text-rose-600 font-bold">Error: Please enter your Gemini API Key in the field above to use this feature.</span>';
+                return;
+            }
+
+            // Construct Prompts based on type
+            let systemPrompt = "";
+            let userPrompt = "";
+
+            const pd = currentPatientData;
+            const patientSummary = `Age: ${pd.age}, BMI: ${pd.bmi}, SBP: ${pd.sbp} mmHg, Baseline Mean Gradient: ${pd.mg} mmHg, eGFR: ${pd.egfr}, LDL: ${pd.ldl}, Atrial Fibrillation: ${pd.af ? 'Yes' : 'No'}, Diabetes: ${pd.diabetes ? 'Yes' : 'No'}, Smoker: ${pd.smoking ? 'Yes' : 'No'}. Calculated Annual AVA Decline: ${pd.decline} cm²/year (${pd.riskCategory}).`;
+
+            if (type === 'ehr') {
+                systemPrompt = "You are an expert cardiologist writing an Electronic Health Record (EHR) note. Be concise, professional, and use standard medical terminology. Do not include markdown headers like # or ##. Use bullet points or simple bolding (**text**) for structure.";
+                userPrompt = `Generate a brief clinical assessment and plan note for a patient with Aortic Stenosis evaluated today. 
+                Patient data: ${patientSummary}
+                
+                The patient's calculated risk requires: ${pd.implications}
+                
+                Format as:
+                **ASSESSMENT:**
+                [1-2 sentences summarizing risk based on the AVA decline model]
+                
+                **PLAN:**
+                - [Follow-up timeline]
+                - [Specific modifiable risk factors to target based on their data]`;
+            } else {
+                systemPrompt = "You are an empathetic cardiologist writing a handout directly for your patient. Use reassuring, easy-to-understand language. Avoid complex medical jargon. Speak directly to the patient ('You', 'Your heart'). Do not use large markdown headers like # or ##. Use simple bolding (**text**) for emphasis.";
+                userPrompt = `Write a short, reassuring educational handout for my patient regarding their Aortic Stenosis.
+                Patient data: ${patientSummary}
+                Modifiable risk factors they specifically need to work on: ${pd.modifiableFactorsList.join(', ') || 'None identified, maintain healthy lifestyle'}.
+                
+                Include:
+                1. A brief, simple explanation of their specific progression speed (${pd.riskCategory}).
+                2. Why it's important to keep their specific follow-up appointments.
+                3. Very specific, actionable lifestyle tips focusing ONLY on their identified modifiable risk factors.`;
+            }
+
+            const combinedPrompt = `${systemPrompt}\n\nTask:\n${userPrompt}`;
+            const payload = { contents: [{ parts: [{ text: combinedPrompt }] }] };
+
+            try {
+                // Get sorted list of available models
+                const modelsToTry = await getAvailableModels(apiKey);
+                let successfulResult = null;
+                let usedModel = "";
+
+                // Attempt generation, falling back to next model if one fails (e.g., due to quota)
+                for (const modelName of modelsToTry) {
+                    console.log(`Attempting generation with model: ${modelName}`);
+                    const url = `https://generativelanguage.googleapis.com/v1beta/${modelName}:generateContent?key=${apiKey}`;
+                    
+                    try {
+                        // Skip the automatic backoff here so we fail fast to the next model
+                        const response = await fetch(url, {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify(payload)
+                        });
+
+                        if (response.ok) {
+                            successfulResult = await response.json();
+                            usedModel = modelName;
+                            break; // Success! Exit the fallback loop.
+                        } else {
+                            const errText = await response.text();
+                            console.warn(`Model ${modelName} failed:`, errText);
+                        }
+                    } catch (err) {
+                        console.warn(`Network error with ${modelName}:`, err);
+                    }
+                }
+
+                if (!successfulResult) {
+                    throw new Error("All available models failed or exhausted free tier quotas. Please check your Google AI Studio billing/plan.");
+                }
+                
+                const generatedText = successfulResult.candidates?.[0]?.content?.parts?.[0]?.text || "No response generated.";
+                
+                // Simple markdown parser to HTML
+                let formattedHtml = generatedText
+                    .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+                    .replace(/\*(.*?)\*/g, '<em>$1</em>')
+                    .replace(/\n/g, '<br>');
+
+                resultContent.innerHTML = `<div class="mb-3 pb-2 border-b border-slate-100 text-xs text-indigo-400 font-mono text-right flex justify-between items-center"><span>✓ Success</span><span>Model: ${usedModel.split('/').pop()}</span></div>` + formattedHtml;
+            } catch (error) {
+                resultContent.innerHTML = `<div class="bg-rose-50 text-rose-700 p-4 rounded-lg border border-rose-200">
+                    <strong class="block mb-1">Failed to generate content.</strong>
+                    <span class="text-xs opacity-80">${error.message}</span>
+                </div>`;
+            } finally {
+                loading.classList.add('hidden');
+                resultContent.classList.remove('hidden');
+            }
+        }
+
+        function calculateRisk() {
+            // Get inputs
+            const age = parseFloat(document.getElementById('age').value) || 0;
+            const mg = parseFloat(document.getElementById('mg').value) || 0;
+            const egfr = parseFloat(document.getElementById('egfr').value) || 90;
+            const af = document.getElementById('af').checked;
+            const diabetes = document.getElementById('diabetes').checked;
+            const sbp = parseFloat(document.getElementById('sbp').value) || 120;
+            const bmi = parseFloat(document.getElementById('bmi').value) || 25;
+            const smoking = document.getElementById('smoking').checked;
+            const ldl = parseFloat(document.getElementById('ldl').value) || 90;
+            const lvmi = parseFloat(document.getElementById('lvmi').value) || 0;
+            const svi = parseFloat(document.getElementById('svi').value) || 0;
+            
+            // Core Algorithm
+            let decline = 0;
+            decline += 0.0013 * age;
+            if (mg > 20) decline += 0.001 * (mg - 20);
+            if (egfr < 60) decline += 0.059;
+            decline += 0.021 * (af ? 1 : 0);
+            decline += 0.020 * (diabetes ? 1 : 0);
+            if (sbp > 140) decline += 0.020;
+            if (bmi > 30) decline += 0.020;
+            decline += 0.020 * (smoking ? 1 : 0);
+            if (ldl > 100) decline += 0.020;
+            if (lvmi > 0) decline += 0.00038 * lvmi;
+            if (svi > 0) decline += 0.0008 * svi;
+            
+            // Logic mapping
+            let risk = '';
+            let headerClass = '';
+            let riskDescription = '';
+            let implications = '';
+            let iconSvg = '';
+
+            if (decline > 0.12) {
+                risk = 'High Risk';
+                headerClass = 'bg-rose-600';
+                riskDescription = 'Rapid progression likely (top quartile in studies). Loss of >0.12 cm²/yr.';
+                implications = 'Recommend more frequent echocardiographic surveillance (every 6–12 months). Earlier consideration of intervention if symptoms develop or severe AS criteria met. Aggressive management of modifiable factors is critical.';
+                iconSvg = `<svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>`;
+            } else if (decline >= 0.08) {
+                risk = 'Medium Risk';
+                headerClass = 'bg-amber-500';
+                riskDescription = 'Average/moderate progression rate expected. Loss of 0.08 - 0.12 cm²/yr.';
+                implications = 'Standard surveillance required (every 1–2 years depending on baseline severity). Optimize modifiable risk factors and monitor closely for symptom onset.';
+                iconSvg = `<svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>`;
+            } else {
+                risk = 'Low Risk';
+                headerClass = 'bg-emerald-600';
+                riskDescription = 'Slower than average progression rate. Loss of <0.08 cm²/yr.';
+                implications = 'Less frequent monitoring may be appropriate (every 2–3 years if mild/moderate AS). Continue lifestyle and risk factor optimization.';
+                iconSvg = `<svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>`;
+            }
+            
+            // Build Modifiable Factors
+            let modifiableFactors = [];
+            let cleanModifiableFactors = []; // For AI prompt
+            
+            if (diabetes) { modifiableFactors.push('Diabetes'); cleanModifiableFactors.push('Diabetes'); }
+            if (sbp > 140) { modifiableFactors.push('Hypertension (>140 mmHg)'); cleanModifiableFactors.push('High Blood Pressure'); }
+            if (bmi > 30) { modifiableFactors.push('Obesity (BMI >30)'); cleanModifiableFactors.push('Weight Management'); }
+            if (smoking) { modifiableFactors.push('Current Smoker'); cleanModifiableFactors.push('Smoking Cessation'); }
+            if (ldl > 100) { modifiableFactors.push('Dyslipidemia (LDL >100)'); cleanModifiableFactors.push('High Cholesterol'); }
+            
+            let modifiableHTML = '';
+            if (modifiableFactors.length > 0) {
+                modifiableHTML = modifiableFactors.map(f => `<span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-rose-50 border border-rose-100 text-rose-700 text-sm font-semibold"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/></svg>${f}</span>`).join(' ');
+            } else {
+                modifiableHTML = '<span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-emerald-50 border border-emerald-100 text-emerald-700 text-sm font-semibold"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>Optimal Profile - Maintain Lifestyle</span>';
+            }
+            
+            // Save state for AI
+            currentPatientData = {
+                age, mg, egfr, af, diabetes, sbp, bmi, smoking, ldl,
+                decline: decline.toFixed(3),
+                riskCategory: risk,
+                implications: implications,
+                modifiableFactorsList: cleanModifiableFactors
+            };
+
+            // Reset AI Container if open
+            document.getElementById('ai-output-container').classList.add('hidden');
+
+            // Update UI
+            document.getElementById('empty-state').classList.add('hidden');
+            document.getElementById('populated-state').classList.remove('hidden');
+            
+            // Apply Header Class
+            const headerEl = document.getElementById('risk-header');
+            headerEl.className = `p-8 text-white transition-colors duration-500 ${headerClass}`;
+            
+            document.getElementById('res-decline').textContent = decline.toFixed(3);
+            document.getElementById('res-category').textContent = risk;
+            document.getElementById('risk-icon').innerHTML = iconSvg;
+            document.getElementById('res-description').textContent = riskDescription;
+            document.getElementById('res-implications').textContent = implications;
+            document.getElementById('res-modifiable').innerHTML = `<div class="flex flex-wrap gap-2">${modifiableHTML}</div>`;
+        }
+    </script>
 </body>
 </html>
